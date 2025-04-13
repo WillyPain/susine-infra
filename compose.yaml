@@ -8,14 +8,7 @@ x-cert-volumes: &cert-volumes
 x-cert-path: &cert-path 
   Kestrel__Certificates__Default__Path: "/root/.aspnet/https/susine.dev.pfx"
 
-
 services:    
-  susine.dev.base.image: 
-    build:
-      context: .
-      dockerfile: Dockerfile.base
-    image: susine.dev.base.image
-
   identity.susine.dev:  
     build:
       context: .
