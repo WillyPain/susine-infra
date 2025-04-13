@@ -1,0 +1,77 @@
+
+# Mount folders containing TLS cert and user secrets (For TLS certificate)
+x-cert-volumes: &cert-volumes
+  - ${APPDATA}\microsoft\UserSecrets:/root/.microsoft/usersecrets
+  - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https
+
+# Kestrel uses this env variable to locate the TLS certificate
+x-cert-path: &cert-path 
+  Kestrel__Certificates__Default__Path: "/root/.aspnet/https/susine.dev.pfx"
+
+
+services:    
+  susine.dev.base.image: 
+    build:
+      context: .
+      dockerfile: Dockerfile.base
+    image: susine.dev.base.image
+
+  identity.susine.dev:  
+    build:
+      context: .
+      dockerfile: ./Identity.Server/Dockerfile
+      target: final
+    environment:
+      <<: *cert-path
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "https://+:7082"
+    networks:
+      - backend
+    ports:
+      - 7082:7082
+    volumes: *cert-volumes
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+    
+  matchmaking.susine.dev:
+    build:
+      context: .
+      dockerfile: ./MatchMaking.Api/Dockerfile
+      target: final
+    environment:
+      <<: *cert-path
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "https://+:7148"
+    networks:
+      - backend
+    ports:
+      - 7148:7148
+    volumes: *cert-volumes
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
+  gso.susine.dev:
+    build:
+      context: .
+      dockerfile: ./GameServerOrchestrator/Dockerfile
+      target: final
+    environment:
+      <<: *cert-path
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: "https://+:7227"
+    networks:
+      - backend
+    ports:
+      - 7227:7227
+    volumes: *cert-volumes
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+
+networks:
+  backend:

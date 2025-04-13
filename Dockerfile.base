@@ -1,0 +1,4 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
+COPY .dev-certs/ /usr/local/share/ca-certificates/
+RUN apk add --no-cache ca-certificates && update-ca-certificates
+WORKDIR /app

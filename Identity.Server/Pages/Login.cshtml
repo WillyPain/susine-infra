@@ -1,0 +1,31 @@
+﻿@page "/login"
+@model IndexModel
+@{
+    ViewData["Title"] = "Sign-in";
+}
+<panel>
+    <img src="images/susine.png" width="350"/>
+    <hr style="width:300px; border-top: 0.1rem solid #d5d5d5; opacity:.75" />
+    <div class="form-wrapper">
+        <h6 style="align-self:start">Sign-in </h6>
+        <form method="post">
+            <input type="hidden" asp-for="ReturnUrl" value="@Model.ReturnUrl" />
+
+            <label>Email</label>
+            <input asp-for="Email" placeholder="your@email.here" type="email" />
+
+            <label>Password</label>
+            <input asp-for="Password" placeholder="*****" type="password" />
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <p style="color: red;">@Model.ErrorMessage</p>
+            }
+
+            <button type="submit">
+                ->
+            </button>
+        </form>
+    </div>
+    
+</panel>
