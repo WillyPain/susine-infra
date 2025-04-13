@@ -28,7 +28,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: ./${{ matrix.api }}/Dockerfile
-          target: build
+          target: publish
           load: true
 
       - name: Build and push
