@@ -27,7 +27,6 @@ jobs:
       - name: Build and test
         uses: docker/build-push-action@v6
         with:
-          context: ./${{ matrix.api }}/
           file: ./${{ matrix.api }}/Dockerfile
           target: build
           load: true
@@ -40,4 +39,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           target: final
-          tags: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
+          tags: ${{ vars.DOCKER_USERNAME }}/${{ github.event.repository.name }}-${{ matrix.api }}:latest
