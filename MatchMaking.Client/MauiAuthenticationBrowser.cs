@@ -24,8 +24,7 @@ namespace MatchMaking.Client
                 new Uri(options.StartUrl),
                 new Uri(options.EndUrl));
 #endif
-
-                var url = new RequestUrl("matchmaking.client://oauth_callback")
+                var url = new RequestUrl(options.EndUrl)
                     .Create([.. result.Properties]);
 
                 return new BrowserResult
