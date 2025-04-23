@@ -2,12 +2,14 @@ using Identity.Server.Data;
 using Identity.Server.Models;
 using Identity.Server.OpenIddictServerHandlers;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using Quartz;
+using System.Net;
 using System.Security.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +37,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     // Note: use the generic overload if you need
     // to replace the default OpenIddict entities.
     options.UseOpenIddict();
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    //TODO: need to replace this with env variable
+    options.KnownProxies.Add(IPAddress.Parse("10.244.0.7"));
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
 // Register the Identity services.
@@ -66,7 +76,7 @@ builder.Services.AddOpenIddict(options =>
     });
     options.AddServer(options =>
     {
-        options.SetIssuer(new Uri("https://identity.susine.dev:7082"));
+        options.SetIssuer(new Uri("https://identity.susine.dev"));
         options.SetAuthorizationEndpointUris("authorize")
                .SetIntrospectionEndpointUris("introspect")
                .SetTokenEndpointUris("token")
@@ -111,6 +121,9 @@ builder.Services.AddRazorPages();
 #endregion
 
 var app = builder.Build();
+
+// Needed since NGINX handles the TLS termination.
+app.UseForwardedHeaders();
 
 string matchMakingApiClientSecret = builder.Configuration["ClientSecrets:MatchMaking.Api"] ?? "";
 string gameServerOrchestratorApiClientSecret = builder.Configuration["ClientSecrets:GameServerOrchestrator"] ?? "";

@@ -1,48 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  labels:
-    service: server
-  name: server
+  name: matchmaking-susine-dev
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: server
-  strategy: {}
+      service: matchmaking-susine-dev
   template:
     metadata:
       labels:
-        service: server
+        service: matchmaking-susine-dev
     spec:
+      serviceAccountName: matchmaking-susine-dev
       containers:
-        - image: willypain/susine-infra-identity-server
-          name: server
+        - image: local/match-making-susine-dev
+          name: matchmaking-susine-dev
           imagePullPolicy: Always
           ports:
-            - containerPort: 7082
-              hostPort: 7082
+            - containerPort: 7148
               protocol: TCP
           resources: {}
       restartPolicy: Always
-status: {}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    service: server
-  name: server
+  name: matchmaking-susine-dev
   namespace: default
 spec:
   type: NodePort
   ports:
-    - name: "7082"
-      port: 7082
-      targetPort: 7082
-      nodePort: 30001
+    - name: "7148"
+      port: 7148
+      targetPort: 7148
+      nodePort: 30002
   selector:
-    service: server
+    service: matchmaking-susine-dev
 status:
   loadBalancer: {}

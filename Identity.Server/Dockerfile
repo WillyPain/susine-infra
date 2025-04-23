@@ -3,17 +3,39 @@ COPY .dev-certs/ /usr/local/share/ca-certificates/
 RUN apk add --no-cache ca-certificates && update-ca-certificates
 WORKDIR /app
 
+## Build stage one - Restore env
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine as restore-env
+ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN dotnet tool install --global --no-cache dotnet-subset
+WORKDIR /restore
+COPY ./Identity.Server ./Identity.Server
+WORKDIR ./Identity.Server
+RUN dotnet subset restore Identity.Server.csproj --root-directory /restore --output /restore/restore_subset/
+
+## Build stage two - restore
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine as build-env
+WORKDIR /src
+COPY --from=restore-env /restore/restore_subset/ .
+RUN dotnet restore ./Identity.Server/Identity.Server.csproj
+
+## Build stage three - build src
+COPY ./Identity.Server ./Identity.Server
+RUN dotnet publish ./Identity.Server/Identity.Server.csproj -o /app /p:UseAppHost=false
+
+## Build stage four - build runtime image
+FROM build-env as dev2
+WORKDIR /app
+ENTRYPOINT ["dotnet", "Identity.Server.dll"]
+
+
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS publish
 WORKDIR /src
 COPY ./Identity.Server ./Identity.Server
 WORKDIR /src/Identity.Server
 RUN dotnet restore
-RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
-    dotnet publish -o /app /p:UseAppHost=false
+RUN dotnet publish -o /app /p:UseAppHost=false
 
 FROM publish as dev
-COPY .dev-certs/ /usr/local/share/ca-certificates/
-RUN apk add --no-cache ca-certificates && update-ca-certificates
 WORKDIR /app
 ENTRYPOINT ["dotnet", "Identity.Server.dll"]
 

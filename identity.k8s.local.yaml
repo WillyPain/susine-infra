@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-deployment
+  labels:
+    service: identity
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: identity
+  template:
+    metadata:
+      labels:
+        service: identity
+    spec:
+      containers:
+        - name: identity
+          image: local/identity-susine-dev:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: identity-service
+  labels:
+    service: identity
+spec:
+  ports:
+    - protocol: TCP
+      # TODO: when i get this working, go back and change this port to 80 (will need to update dev compose file)
+      port: 8080
+  selector:
+    service: identity
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-identity
+spec:
+  rules:
+    - host: identity.susine.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: identity-service
+                port:
+                  number: 8080
+  ingressClassName: nginx
