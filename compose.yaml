@@ -15,18 +15,17 @@ services:
       dockerfile: ./Identity.Server/Dockerfile
       target: dev
     environment:
-      <<: *cert-path
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: "https://+:7082"
+      ASPNETCORE_URLS: "http://+:7082"
     networks:
       - backend
     ports:
       - 7082:7082
-    volumes: *cert-volumes
     develop:
       watch:
         - action: rebuild
           path: .
+    image: local/identity-susine-dev
     
   matchmaking.susine.dev:
     build:
@@ -34,18 +33,17 @@ services:
       dockerfile: ./MatchMaking.Api/Dockerfile
       target: dev
     environment:
-      <<: *cert-path
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: "https://+:7148"
     networks:
       - backend
     ports:
       - 7148:7148
-    volumes: *cert-volumes
     develop:
       watch:
         - action: rebuild
           path: .
+    image: local/match-making-susine-dev
 
   gso.susine.dev:
     build:
@@ -65,6 +63,7 @@ services:
       watch:
         - action: rebuild
           path: .
+    image: local/gso-susine-dev
 
 networks:
   backend:
