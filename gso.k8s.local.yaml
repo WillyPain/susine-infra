@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-gso
+  labels:
+    service: gso
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: gso
+  template:
+    metadata:
+      labels:
+        service: gso
+    spec:
+      containers:
+        - name: gso
+          image: local/gso-susine-dev:latest
+          imagePullPolicy: Always
+          env:
+            - name: OAuth__ClientSecret
+              valueFrom: 
+                secretKeyRef:
+                  name: oauth-client-secrets
+                  key: gso
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-gso
+  labels:
+    service: gso
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+  selector:
+    service: gso
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-gso
+spec:
+  rules:
+    - host: gso.susine.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service-gso
+                port:
+                  number: 8080
+  ingressClassName: nginx

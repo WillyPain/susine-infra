@@ -4,7 +4,6 @@ using MatchMaking.Server.Hubs;
 using MatchMaking.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Client;
-using OpenIddict.Validation;
 using OpenIddict.Validation.AspNetCore;
 using System.Net.Http.Headers;
 
@@ -28,7 +27,7 @@ builder.Services.AddOpenIddict()
             .SetProductInformation(typeof(Program).Assembly);
         options.AddRegistration(new OpenIddictClientRegistration
         {
-            Issuer = new Uri("https://identity.susine.dev:7082/", UriKind.Absolute),
+            Issuer = new Uri("https://identity.susine.dev/", UriKind.Absolute),
             ClientId = clientId,
             ClientSecret = clientSecret,
             Scopes =
@@ -39,7 +38,7 @@ builder.Services.AddOpenIddict()
     })
     .AddValidation(options =>
     {
-        options.SetIssuer("https://identity.susine.dev:7082/");
+        options.SetIssuer("https://identity.susine.dev/");
         options.AddAudiences(clientId);
 
         options.UseIntrospection()
@@ -110,7 +109,7 @@ static async Task<string> GetTokenAsync(IServiceProvider provider)
 static async Task<string> GetResourceAsync(IServiceProvider provider, string token)
 {
     using var client = provider.GetRequiredService<HttpClient>();
-    using var request = new HttpRequestMessage(HttpMethod.Get, "https://gso.susine.dev:7227/test");
+    using var request = new HttpRequestMessage(HttpMethod.Get, "https://gso.susine.dev/server");
     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
     using var response = await client.SendAsync(request);

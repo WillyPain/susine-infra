@@ -13,7 +13,7 @@ builder.Services.AddOpenIddict()
         var clientId = "gso-api-0438a111-89e9-43b8-a1d9-f196df19d0dd";
         var clientSecret = builder.Configuration["OAuth:ClientSecret"] ?? "";
 
-        options.SetIssuer("https://identity.susine.dev:7082/");
+        options.SetIssuer("https://identity.susine.dev/");
         options.UseIntrospection()
                .SetClientId(clientId)
                .SetClientSecret(clientSecret);

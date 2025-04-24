@@ -18,6 +18,17 @@ spec:
         - name: identity
           image: local/identity-susine-dev:latest
           imagePullPolicy: Always
+          env:
+            - name: ClientSecrets__MatchMaking.Api
+              valueFrom: 
+                secretKeyRef:
+                  name: matchmaking-api-secret
+                  key: MatchMaking.Api
+            - name: ClientSecrets__GameServerOrchestrator.Api
+              valueFrom: 
+                secretKeyRef:
+                  name: oauth-client-secrets
+                  key: gso
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -53,3 +64,6 @@ spec:
                 port:
                   number: 8080
   ingressClassName: nginx
+
+# sadly might be getting rid of this Istio
+# https://istio.io/latest/docs/reference/config/networking/virtual-service/

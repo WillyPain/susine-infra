@@ -9,7 +9,7 @@ namespace MatchMaking.Contract
     public static class Definitions
     {
         //TODO: move some of this shit to env variables
-        public const string Domain = "https://matchmaking.susine.dev:7148";
+        public const string Domain = "https://matchmaking.susine.dev";
 
         public static class Hubs
         {

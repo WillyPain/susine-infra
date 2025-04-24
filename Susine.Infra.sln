@@ -17,8 +17,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{8EC462
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
 		compose.yaml = compose.yaml
+		dns.k8s.local.yaml = dns.k8s.local.yaml
+		gso.k8s.local.yaml = gso.k8s.local.yaml
 		identity.k8s.local.yaml = identity.k8s.local.yaml
-		match-making.k8s.local.yaml = match-making.k8s.local.yaml
+		matchmaking.k8s.local.yaml = matchmaking.k8s.local.yaml
+		secrets.k8s.local.yaml = secrets.k8s.local.yaml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchMaking.Api.Tests", "MatchMaking.Api.Tests\MatchMaking.Api.Tests.csproj", "{139AF44F-D7E3-8732-5A3B-1B4DC8F3F04B}"

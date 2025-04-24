@@ -56,7 +56,7 @@ namespace MatchMaking.Client
             // setup OidcClient
             builder.Services.AddSingleton(new OidcClient(new()
             {
-                Authority = "https://identity.susine.dev:7082",
+                Authority = "https://identity.susine.dev",
 
                 ClientId = "mm-client-36bbac63-6f8b-4b6a-b7cf-a73573161729",
                 Scope = "openid email offline_access mm.api",

@@ -16,7 +16,6 @@ services:
       target: dev
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: "http://+:7082"
     networks:
       - backend
     ports:
@@ -34,7 +33,6 @@ services:
       target: dev
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: "https://+:7148"
     networks:
       - backend
     ports:
@@ -43,7 +41,7 @@ services:
       watch:
         - action: rebuild
           path: .
-    image: local/match-making-susine-dev
+    image: local/matchmaking-susine-dev
 
   gso.susine.dev:
     build:
@@ -51,14 +49,11 @@ services:
       dockerfile: ./GameServerOrchestrator/Dockerfile
       target: dev
     environment:
-      <<: *cert-path
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: "https://+:7227"
     networks:
       - backend
     ports:
       - 7227:7227
-    volumes: *cert-volumes
     develop:
       watch:
         - action: rebuild

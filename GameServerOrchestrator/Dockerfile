@@ -1,16 +1,29 @@
+ARG APP_NAME=GameServerOrchestrator
+
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS publish
+## Build stage one - Restore env
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine as restore-env
+ARG APP_NAME
+ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN dotnet tool install --global --no-cache dotnet-subset
+WORKDIR /restore
+COPY . .
+WORKDIR ./${APP_NAME}
+RUN dotnet subset restore ${APP_NAME}.csproj --root-directory /restore --output /restore/restore_subset/
+
+## Build stage two - restore
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine as publish
+ARG APP_NAME
 WORKDIR /src
-COPY ./GameServerOrchestrator ./GameServerOrchestrator
-WORKDIR /src/GameServerOrchestrator
-RUN dotnet restore
-RUN dotnet publish -o /app /p:UseAppHost=false
+COPY --from=restore-env /restore/restore_subset/ .
+RUN dotnet restore ./${APP_NAME}/${APP_NAME}.csproj
+## Build stage three - build src
+COPY . .
+RUN dotnet publish ./${APP_NAME}/${APP_NAME}.csproj -o /app /p:UseAppHost=false
 
 FROM publish as dev
-COPY .dev-certs/ /usr/local/share/ca-certificates/
-RUN apk add --no-cache ca-certificates && update-ca-certificates
 WORKDIR /app
 ENTRYPOINT ["dotnet", "GameServerOrchestrator.dll"]
 
