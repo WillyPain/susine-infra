@@ -17,12 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{8EC462
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
 		compose.yaml = compose.yaml
-		dns.k8s.local.yaml = dns.k8s.local.yaml
-		gso.k8s.local.yaml = gso.k8s.local.yaml
-		identity.k8s.local.yaml = identity.k8s.local.yaml
-		matchmaking.k8s.local.yaml = matchmaking.k8s.local.yaml
-		secrets.k8s.local.yaml = secrets.k8s.local.yaml
-		namespaces.k8s.local.yaml = namespaces.k8s.local.yaml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchMaking.Api.Tests", "MatchMaking.Api.Tests\MatchMaking.Api.Tests.csproj", "{139AF44F-D7E3-8732-5A3B-1B4DC8F3F04B}"
@@ -32,6 +26,17 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{5203CDB6-FD16-495B-A234-7F1B094D6CE8}"
 	ProjectSection(SolutionItems) = preProject
 		readme.md = readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", "{DD0BA48A-C6C4-4055-8412-640A5228CAF6}"
+	ProjectSection(SolutionItems) = preProject
+		identity.local.k8s.deployment.yaml = identity.local.k8s.deployment.yaml
+		dns.local.k8s.yaml = dns.local.k8s.yaml
+		gso.local.k8s.deployment.yaml = gso.local.k8s.deployment.yaml
+		matchmaking.local.k8s.deployment.yaml = matchmaking.local.k8s.deployment.yaml
+		namespaces.local.k8s.yaml = namespaces.local.k8s.yaml
+		skaffold.yaml = skaffold.yaml
+		secrets.local.k8s.yaml = secrets.local.k8s.yaml
 	EndProjectSection
 EndProject
 Global

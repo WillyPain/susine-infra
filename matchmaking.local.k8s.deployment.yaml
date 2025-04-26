@@ -47,6 +47,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-matchmaking
+  namespace: susine-infra
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
   rules:
     - host: matchmaking.susine.dev
