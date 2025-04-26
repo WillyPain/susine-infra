@@ -1,0 +1,27 @@
+apiVersion: skaffold/v4beta13
+kind: Config
+metadata:
+  name: susine-infra
+build:
+  local:
+    concurrency: 4
+  artifacts:
+    - image: local/identity-susine-dev
+      context: .
+      docker:
+        dockerfile: Identity.Server/Dockerfile
+        target: dev
+    - image: local/matchmaking-susine-dev
+      context: .
+      docker:
+        dockerfile: MatchMaking.Api/Dockerfile
+        target: dev
+    - image: local/gso-susine-dev
+      context: .
+      docker:
+        dockerfile: GameServerOrchestrator/Dockerfile
+        target: dev
+manifests:
+  rawYaml:
+    - '*.local.k8s.yaml'
+    - '*.local.k8s.deployment.yaml'

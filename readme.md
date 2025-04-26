@@ -31,6 +31,12 @@ Date: 25/04/2025
 	  --set controller.extraArgs.default-ssl-certificate=ingress-nginx/susine.dev`
 - Create secret for dev cert
 	- kubectl create secret tls susine.dev --key susine.dev.key --cert susine.dev.crt -n ingress-nginx
+- Install Linkerd Service Mesh (With Helm)
+	- helm repo add linkerd-edge https://helm.linkerd.io/edge
+	- helm install linkerd-crds linkerd-edge/linkerd-crds -n linkerd --create-namespace
+	- step certificate create root.linkerd.cluster.local ca.crt ca.key --profile root-ca --no-password --insecure
+	- step certificate create identity.linkerd.cluster.local issuer.crt issuer.key --profile intermediate-ca --not-after 8760h --no-password --insecure --ca ca.crt --ca-key ca.key
+	- helm install linkerd-control-plane -n linkerd --set-file identityTrustAnchorsPEM=ca.crt --set-file identity.issuer.tls.crtPEM=issuer.crt --set-file identity.issuer.tls.keyPEM=issuer.key linkerd-edge/linkerd-control-plane
 - Apply the following k8s manifest files in Docker folder
 	- kubectl apply -f identity.k8s.local.yaml
 	- kubectl apply -f matchmaking.k8s.local.yaml

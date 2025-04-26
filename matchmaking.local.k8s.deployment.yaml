@@ -1,29 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment-gso
+  name: deployment-matchmaking
+  namespace: susine-infra
   labels:
-    service: gso
+    service: matchmaking
 spec:
   replicas: 1
   selector:
     matchLabels:
-      service: gso
+      service: matchmaking
   template:
     metadata:
       labels:
-        service: gso
+        service: matchmaking
     spec:
       containers:
-        - name: gso
-          image: local/gso-susine-dev:latest
+        - name: matchmaking
+          image: local/matchmaking-susine-dev:latest
           imagePullPolicy: Always
           env:
             - name: OAuth__ClientSecret
               valueFrom: 
                 secretKeyRef:
                   name: oauth-client-secrets
-                  key: gso
+                  key: matchmaking-api
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -31,30 +32,31 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-gso
+  name: service-matchmaking
+  namespace: susine-infra
   labels:
-    service: gso
+    service: matchmaking
 spec:
   ports:
     - protocol: TCP
       port: 8080
   selector:
-    service: gso
+    service: matchmaking
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-gso
+  name: ingress-matchmaking
 spec:
   rules:
-    - host: gso.susine.dev
+    - host: matchmaking.susine.dev
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: service-gso
+                name: service-matchmaking
                 port:
                   number: 8080
   ingressClassName: nginx

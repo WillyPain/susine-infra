@@ -1,7 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: identity-deployment
+  name: deployment-identity
+  namespace: susine-infra
   labels:
     service: identity
 spec:
@@ -22,8 +23,8 @@ spec:
             - name: ClientSecrets__MatchMaking.Api
               valueFrom: 
                 secretKeyRef:
-                  name: matchmaking-api-secret
-                  key: MatchMaking.Api
+                  name: oauth-client-secrets
+                  key: matchmaking-api
             - name: ClientSecrets__GameServerOrchestrator.Api
               valueFrom: 
                 secretKeyRef:
@@ -36,7 +37,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: identity-service
+  name: service-identity
+  namespace: susine-infra
   labels:
     service: identity
 spec:
@@ -51,6 +53,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-identity
+  namespace: susine-infra
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
   rules:
     - host: identity.susine.dev
@@ -60,7 +65,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: identity-service
+                name: service-identity
                 port:
                   number: 8080
   ingressClassName: nginx
