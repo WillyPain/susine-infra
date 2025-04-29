@@ -27,7 +27,7 @@ builder.Services.AddOpenIddict()
             .SetProductInformation(typeof(Program).Assembly);
         options.AddRegistration(new OpenIddictClientRegistration
         {
-            Issuer = new Uri("https://identity.susine.dev/", UriKind.Absolute),
+            Issuer = new Uri("http://service-identity:8080/", UriKind.Absolute),
             ClientId = clientId,
             ClientSecret = clientSecret,
             Scopes =
@@ -38,7 +38,7 @@ builder.Services.AddOpenIddict()
     })
     .AddValidation(options =>
     {
-        options.SetIssuer("https://identity.susine.dev/");
+        options.SetIssuer("http://service-identity:8080/");
         options.AddAudiences(clientId);
 
         options.UseIntrospection()

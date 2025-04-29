@@ -1,5 +1,4 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
-COPY .dev-certs/ /usr/local/share/ca-certificates/
 WORKDIR /app
 
 ## Build stage one - Restore env

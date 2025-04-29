@@ -42,3 +42,5 @@ Date: 25/04/2025
 	- kubectl apply -f matchmaking.k8s.local.yaml
 	- kubectl apply -f gso.k8s.local.yaml
 	- kubectl apply -f secrets.k8s.local.yaml
+- Restart coreDns to apply the host header rewrite
+	- kubectl -n kube-system rollout restart deployment coredns

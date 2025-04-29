@@ -3,6 +3,7 @@ using OpenIddict.Abstractions;
 using OpenIddict.Server;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using System.Security.Claims;
+using Microsoft.AspNetCore;
 
 namespace Identity.Server.OpenIddictServerHandlers
 {
@@ -12,7 +13,7 @@ namespace Identity.Server.OpenIddictServerHandlers
     /// </summary>
     /// <param name="appManager"></param>
     /// <param name="scopeManager"></param>
-    public class HandleTokenRequest(IOpenIddictApplicationManager appManager, IOpenIddictScopeManager scopeManager) 
+    public class HandleTokenRequest(IOpenIddictApplicationManager appManager, IOpenIddictScopeManager scopeManager)
         : IOpenIddictServerHandler<OpenIddictServerEvents.HandleTokenRequestContext>
     {
         public static OpenIddictServerHandlerDescriptor Descriptor { get; }
@@ -78,6 +79,51 @@ namespace Identity.Server.OpenIddictServerHandlers
 
                 _ => [Destinations.AccessToken],
             };
+        }
+    }
+
+    public class HandleConfigurationRequest(IOpenIddictApplicationManager appManager, IOpenIddictScopeManager scopeManager)
+    : IOpenIddictServerHandler<OpenIddictServerEvents.HandleConfigurationRequestContext>
+    {
+        public static OpenIddictServerHandlerDescriptor Descriptor { get; }
+        = OpenIddictServerHandlerDescriptor.CreateBuilder<OpenIddictServerEvents.HandleConfigurationRequestContext>()
+            .UseScopedHandler<HandleConfigurationRequest>()
+            .SetOrder(1)
+            .SetType(OpenIddictServerHandlerType.Custom)
+            .Build();
+
+        public ValueTask HandleAsync(OpenIddictServerEvents.HandleConfigurationRequestContext context)
+        {
+            var request = context.Transaction.GetHttpRequest();
+            var host = request!.Host.Host;
+
+            // internal traffic
+            if (host.Contains("service-identity"))
+            {
+                var port = request!.Host.Port!.Value;
+                var baseUri = new UriBuilder(Uri.UriSchemeHttp, host, port);
+
+                // There is another event handler further down the chain that will override the Issuer based on
+                // whats set in this Options object
+                context.Options.Issuer = baseUri.Uri;
+
+                baseUri.Path = "authorize";
+                context.AuthorizationEndpoint = baseUri.Uri;
+
+                baseUri.Path = "introspect";
+                context.IntrospectionEndpoint = baseUri.Uri;
+
+                baseUri.Path = "token";
+                context.TokenEndpoint = baseUri.Uri;
+
+                baseUri.Path = "userinfo";
+                context.UserInfoEndpoint = baseUri.Uri;
+
+                baseUri.Path = ".well-known/jwks";
+                context.JsonWebKeySetEndpoint = baseUri.Uri;
+            }
+
+            return default;
         }
     }
 }

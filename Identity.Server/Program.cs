@@ -42,7 +42,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     //TODO: need to replace this with env variable
+    //For nginx ingress controller
     options.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(IPAddress.Parse("10.244.0.0"), 16));
+
+    //For linkerd sidecar proxy
     options.ForwardedHeaders =
         ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
@@ -76,7 +79,6 @@ builder.Services.AddOpenIddict(options =>
     });
     options.AddServer(options =>
     {
-        options.SetIssuer(new Uri("https://identity.susine.dev"));
         options.SetAuthorizationEndpointUris("authorize")
                .SetIntrospectionEndpointUris("introspect")
                .SetTokenEndpointUris("token")
@@ -98,6 +100,7 @@ builder.Services.AddOpenIddict(options =>
         options.AddDevelopmentSigningCertificate();
 
         options.AddEventHandler(HandleTokenRequest.Descriptor);
+        options.AddEventHandler(HandleConfigurationRequest.Descriptor);
 
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough();
