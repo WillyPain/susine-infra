@@ -109,7 +109,7 @@ static async Task<string> GetTokenAsync(IServiceProvider provider)
 static async Task<string> GetResourceAsync(IServiceProvider provider, string token)
 {
     using var client = provider.GetRequiredService<HttpClient>();
-    using var request = new HttpRequestMessage(HttpMethod.Get, "https://gso.susine.dev/server");
+    using var request = new HttpRequestMessage(HttpMethod.Get, "http://service-gso:8080/server");
     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
     using var response = await client.SendAsync(request);

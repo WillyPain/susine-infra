@@ -1,4 +1,4 @@
-using Identity.Server.Data;
+﻿using Identity.Server.Data;
 using Identity.Server.Models;
 using Identity.Server.OpenIddictServerHandlers;
 using Microsoft.AspNetCore;
@@ -100,7 +100,9 @@ builder.Services.AddOpenIddict(options =>
         options.AddDevelopmentSigningCertificate();
 
         options.AddEventHandler(HandleTokenRequest.Descriptor);
-        options.AddEventHandler(HandleConfigurationRequest.Descriptor);
+        options.AddEventHandler(HandleConfigurationRequestK8sFix.Descriptor);
+        options.AddEventHandler(ExtractIntrospectionRequestK8sFix.Descriptor);
+        options.AddEventHandler(ApplyIntrospectionResponseK8sFix.Descriptor);
 
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough();
@@ -127,6 +129,18 @@ var app = builder.Build();
 
 // Needed since NGINX handles the TLS termination.
 app.UseForwardedHeaders();
+
+// Hack to allow service mesh traffic 
+var identityServerIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
+app.Use(async (context, next) =>
+{
+    var remoteIp = context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+    if (remoteIp == identityServerIp)
+    {
+        context.Request.Scheme = "https";
+    }
+    await next();
+});
 
 string matchMakingApiClientSecret = builder.Configuration["ClientSecrets:MatchMaking.Api"] ?? "";
 string gameServerOrchestratorApiClientSecret = builder.Configuration["ClientSecrets:GameServerOrchestrator"] ?? "";
