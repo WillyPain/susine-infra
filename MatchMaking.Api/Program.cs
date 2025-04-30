@@ -76,24 +76,24 @@ app.MapHub<MatchMakingHub>(Definitions.Hubs.MatchMakingEndpoint, options => {
     //options.CloseOnAuthenticationExpiration = true; TODO: look into this
 });
 
-
-#region TEST
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    using (var scope = app.Services.CreateScope())
-    {
-        await Task.Delay(1000);
-        var token = await GetTokenAsync(scope.ServiceProvider);
-        Console.WriteLine("Access token: {0}", token);
-        Console.WriteLine();
-
-        var resource = await GetResourceAsync(scope.ServiceProvider, token);
-        Console.WriteLine("API response: {0}", resource);
-        Console.ReadLine();
-        await scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.MigrateAsync();
-    }
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate(); // Applies any pending migrations
 }
 
+#region TEST
+
+using (var scope = app.Services.CreateScope())
+{
+    await Task.Delay(1000);
+    var token = await GetTokenAsync(scope.ServiceProvider);
+    Console.WriteLine("Access token: {0}", token);
+    Console.WriteLine();
+
+    var resource = await GetResourceAsync(scope.ServiceProvider, token);
+    Console.WriteLine("API response: {0}", resource);
+}
 static async Task<string> GetTokenAsync(IServiceProvider provider)
 {
     var service = provider.GetRequiredService<OpenIddictClientService>();

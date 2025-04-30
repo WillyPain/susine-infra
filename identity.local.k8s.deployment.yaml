@@ -25,7 +25,7 @@ spec:
                 secretKeyRef:
                   name: oauth-client-secrets
                   key: matchmaking-api
-            - name: ClientSecrets__GameServerOrchestrator.Api
+            - name: ClientSecrets__GameServerOrchestrator
               valueFrom: 
                 secretKeyRef:
                   name: oauth-client-secrets

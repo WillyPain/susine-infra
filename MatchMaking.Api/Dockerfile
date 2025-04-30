@@ -1,8 +1,6 @@
 ARG APP_NAME=MatchMaking.Api
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
-COPY .dev-certs/ /usr/local/share/ca-certificates/
-RUN apk add --no-cache ca-certificates && update-ca-certificates
 WORKDIR /app
 
 ## Build stage one - Restore env
@@ -25,7 +23,6 @@ RUN dotnet restore ./${APP_NAME}/${APP_NAME}.csproj
 COPY . .
 RUN dotnet publish ./${APP_NAME}/${APP_NAME}.csproj -o /app /p:UseAppHost=false
 RUN dotnet test ./${APP_NAME}.Tests/${APP_NAME}.Tests.csproj
-
 
 FROM publish as dev
 WORKDIR /app

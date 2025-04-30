@@ -22,7 +22,7 @@ public partial class MainPage : ContentPage
         _timer.Interval = TimeSpan.FromSeconds(1);
         _timer.Tick += (_,_) => {
             _currentTimeInQueue = _currentTimeInQueue.Add(TimeSpan.FromSeconds(1));
-            TimerLabel.Text = $"Seconds in Queue: {_currentTimeInQueue.ToString(@"m\:ss")}";
+            UpdateQueueTime();
         };
 
         _matchMakingHubConnection.OnQueueJoined += () => _timer.Start();
@@ -52,11 +52,17 @@ public partial class MainPage : ContentPage
     {
         _timer.Stop();
         _currentTimeInQueue = new TimeSpan();
+        UpdateQueueTime();
         await Dispatcher.DispatchAsync(() =>
         {
             FindMatchButton.IsVisible = true;
             TimerSection.IsVisible = false;
         });
+    }
+
+    public void UpdateQueueTime()
+    {
+        TimerLabel.Text = $"Seconds in Queue: {_currentTimeInQueue.ToString(@"m\:ss")}";
     }
 
 #if WINDOWS
