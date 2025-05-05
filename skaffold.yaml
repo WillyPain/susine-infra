@@ -5,23 +5,29 @@ metadata:
 build:
   local:
     concurrency: 4
+  tagPolicy:
+    sha256: {}
   artifacts:
-    - image: local/identity-susine-dev
+    - image: 192.168.1.101:5000/identity-susine-dev
       context: .
       docker:
         dockerfile: Identity.Server/Dockerfile
         target: dev
-    - image: local/matchmaking-susine-dev
+    - image: 192.168.1.101:5000/matchmaking-susine-dev
       context: .
       docker:
         dockerfile: MatchMaking.Api/Dockerfile
         target: dev
-    - image: local/gso-susine-dev
+    - image: 192.168.1.101:5000/gso-susine-dev
       context: .
       docker:
         dockerfile: GameServerOrchestrator/Dockerfile
         target: dev
 manifests:
   rawYaml:
+  #probs should move these into folders rather than grouping by file name  
     - '*.local.k8s.yaml'
-    - '*.local.k8s.deployment.yaml'
+    - 'rbac.local.k8s.roles.yaml' 
+    - 'identity.local.k8s.deployment.yaml'
+    - 'gso.local.k8s.deployment.yaml'
+    - 'matchmaking.local.k8s.deployment.yaml'

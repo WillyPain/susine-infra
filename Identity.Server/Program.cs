@@ -79,7 +79,8 @@ builder.Services.AddOpenIddict(options =>
     });
     options.AddServer(options =>
     {
-        options.SetAuthorizationEndpointUris("authorize")
+        options.SetIssuer("https://identity.susine.dev")
+               .SetAuthorizationEndpointUris("authorize")
                .SetIntrospectionEndpointUris("introspect")
                .SetTokenEndpointUris("token")
                .SetUserInfoEndpointUris("userinfo");
@@ -102,7 +103,6 @@ builder.Services.AddOpenIddict(options =>
         options.AddEventHandler(HandleTokenRequest.Descriptor);
         options.AddEventHandler(HandleConfigurationRequestK8sFix.Descriptor);
         options.AddEventHandler(ExtractIntrospectionRequestK8sFix.Descriptor);
-        options.AddEventHandler(ApplyIntrospectionResponseK8sFix.Descriptor);
 
         options.UseAspNetCore()
                .EnableAuthorizationEndpointPassthrough();
@@ -124,7 +124,6 @@ builder.Services.AddOpenIddict(options =>
 builder.Services.AddRazorPages();
 
 #endregion
-
 var app = builder.Build();
 
 // Needed since NGINX handles the TLS termination.

@@ -24,7 +24,7 @@ services:
       watch:
         - action: rebuild
           path: .
-    image: local/identity-susine-dev
+    image: 192.168.1.101:5000/identity-susine-dev
     
   matchmaking.susine.dev:
     build:
@@ -41,7 +41,7 @@ services:
       watch:
         - action: rebuild
           path: .
-    image: local/matchmaking-susine-dev
+    image: 192.168.1.101:5000/matchmaking-susine-dev
 
   gso.susine.dev:
     build:
@@ -58,7 +58,7 @@ services:
       watch:
         - action: rebuild
           path: .
-    image: local/gso-susine-dev
+    image: 192.168.1.101:5000/gso-susine-dev
 
 networks:
   backend:

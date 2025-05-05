@@ -5,7 +5,9 @@ using OpenIddict.Server;
 namespace Identity.Server.OpenIddictServerHandlers
 {
     /// <summary>
-    /// Need to fix the discovery document for internal clients using service host names (k8s stuff)
+    /// Fix the endpoints in the discovery document for internal clients using service host names
+    /// Set Scheme to => http (defaults to https)
+    /// Set Host to => internal service name
     /// </summary>
     public class HandleConfigurationRequestK8sFix
         : IOpenIddictServerHandler<OpenIddictServerEvents.HandleConfigurationRequestContext>

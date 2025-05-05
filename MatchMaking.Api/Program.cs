@@ -1,11 +1,15 @@
-using MatchMaking.Contract;
+﻿using MatchMaking.Contract;
 using MatchMaking.Server.Data;
 using MatchMaking.Server.Hubs;
 using MatchMaking.Server.Services;
 using Microsoft.EntityFrameworkCore;
 using OpenIddict.Client;
+using OpenIddict.Validation;
 using OpenIddict.Validation.AspNetCore;
 using System.Net.Http.Headers;
+using static OpenIddict.Validation.OpenIddictValidationEvents;
+using static OpenIddict.Client.OpenIddictClientHandlers.Introspection;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +32,7 @@ builder.Services.AddOpenIddict()
         options.AddRegistration(new OpenIddictClientRegistration
         {
             Issuer = new Uri("http://service-identity:8080/", UriKind.Absolute),
+            ClaimsIssuer = "https://identity.susine.dev",
             ClientId = clientId,
             ClientSecret = clientSecret,
             Scopes =
@@ -39,7 +44,30 @@ builder.Services.AddOpenIddict()
     .AddValidation(options =>
     {
         options.SetIssuer("http://service-identity:8080/");
+        options.SetClaimsIssuer("https://identity.susine.dev/");
         options.AddAudiences(clientId);
+
+        options.AddEventHandler<HandleIntrospectionResponseContext>(builder =>
+        {
+            builder.SetOrder(ValidateWellKnownParameters.Descriptor.Order + 998);
+            builder.SetType(OpenIddictValidationHandlerType.Custom);
+            builder.UseInlineHandler(context =>
+            {
+                /* Linkerd doesnt let you route based off fqdn which causes some issues 
+                 * with the issuer in the claims (pun not intended).*/
+
+                // This handler:
+                    // 1. check if the issuer is either the internal service name or the fqdn (either is fine)
+                    // 2. If valid issuer overrite it with the internal service name so the openiddict validation succeeds
+                var issuer = (string?)context.Response[Claims.Issuer];
+                if (!string.IsNullOrEmpty(issuer) && (issuer.Equals("http://service-identity:8080/") || issuer.Equals("https://identity.susine.dev/")))
+                {
+                    context.Response[Claims.Issuer] = "http://service-identity:8080/";
+                }
+
+                return default;
+            });
+        });
 
         options.UseIntrospection()
                .SetClientId(clientId)
@@ -113,7 +141,6 @@ static async Task<string> GetResourceAsync(IServiceProvider provider, string tok
     request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
     using var response = await client.SendAsync(request);
-    response.EnsureSuccessStatusCode();
 
     return await response.Content.ReadAsStringAsync();
 }
