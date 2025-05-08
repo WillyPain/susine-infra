@@ -77,7 +77,7 @@ app.MapGet("server", [Authorize] (Kubernetes client) =>
     }
     var instanceId = Guid.NewGuid();
     var labels = new Dictionary<string, string> { { "game-server-id", instanceId.ToString() } };
-    
+
     var pod = new V1Pod
     {
         Metadata = new V1ObjectMeta
@@ -89,16 +89,19 @@ app.MapGet("server", [Authorize] (Kubernetes client) =>
         {
             HostNetwork = true,
             RestartPolicy = "Never",
-            Containers = [
-                new() {
-                    Name = "bright-moon",
-                    Image = "willypain/susine-bright-moon-server:latest",
-                    Ports = [
-                        new V1ContainerPort { ContainerPort = 4296, Protocol = "TCP" },
-                        new V1ContainerPort { ContainerPort = 4297, Protocol = "UDP" }
-                    ]
+            Containers = [ new() {
+                Name = "bright-moon",
+                Image = "willypain/susine-bright-moon-server:latest",
+                Ports = [
+                    new V1ContainerPort { ContainerPort = 4296, Protocol = "TCP" },
+                    new V1ContainerPort { ContainerPort = 4297, Protocol = "UDP" }
+                ],
+                Resources = {
+                    Requests = new Dictionary<string,ResourceQuantity> {
+                        { "cpu", new ResourceQuantity("300m") },
+                    }
                 }
-            ],
+            }],
             ImagePullSecrets = [
                 new () {
                     Name = "regcred"

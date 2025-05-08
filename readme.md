@@ -47,8 +47,7 @@ Date: 25/04/2025
 - TODO: may as well make this a script at some point (ill wait to iron out the kinks first)
 
 #### Installing k3s cluster
-- Install k3s -> `sudo curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--tls-san <servers ip> --disable traefik" sh -s -`
-- Set the `sudo k3s server --node-ip=<server ip>`
+- Install k3s -> `sudo curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--tls-san <server ip> --node-ip <server ip> --disable traefik" sh -s -`
 
 #### Kube'n from home
 - Yoink the cluster config from k3s server `sudo cat /etc/rancher/k3s/k3s.yaml`
