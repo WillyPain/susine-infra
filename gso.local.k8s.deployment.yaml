@@ -18,7 +18,7 @@ spec:
       serviceAccountName: service-account-gso
       containers:
         - name: gso
-          image: 192.168.1.101:5000/gso-susine-dev:latest
+          image: willypain.local:5000/gso-susine-dev:latest
           imagePullPolicy: Always
           env:
             - name: OAuth__ClientSecret

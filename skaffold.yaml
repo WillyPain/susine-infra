@@ -8,17 +8,17 @@ build:
   tagPolicy:
     sha256: {}
   artifacts:
-    - image: 192.168.1.101:5000/identity-susine-dev
+    - image: willypain.local:5000/identity-susine-dev
       context: .
       docker:
         dockerfile: Identity.Server/Dockerfile
         target: dev
-    - image: 192.168.1.101:5000/matchmaking-susine-dev
+    - image: willypain.local:5000/matchmaking-susine-dev
       context: .
       docker:
         dockerfile: MatchMaking.Api/Dockerfile
         target: dev
-    - image: 192.168.1.101:5000/gso-susine-dev
+    - image: willypain.local:5000/gso-susine-dev
       context: .
       docker:
         dockerfile: GameServerOrchestrator/Dockerfile

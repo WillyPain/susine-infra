@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: identity
-          image: 192.168.1.101:5000/identity-susine-dev:latest
+          image: willypain.local:5000/identity-susine-dev:latest
           imagePullPolicy: Always
           env:
             - name: ClientSecrets__MatchMaking.Api

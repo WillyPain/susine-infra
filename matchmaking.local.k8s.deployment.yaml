@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: matchmaking
-          image: 192.168.1.101:5000/matchmaking-susine-dev:latest
+          image: willypain.local:5000/matchmaking-susine-dev:latest
           imagePullPolicy: Always
           env:
             - name: OAuth__ClientSecret
