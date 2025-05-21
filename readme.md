@@ -23,7 +23,7 @@ Date: 25/04/2025
 - Build dev images
     - Run `docker compose build`
 - Start K8s kind from docker desktop
-- Install nginx ingress controller
+- Install nginx ingress controller (With Helm)
 	- helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx 
 	- helm repo update
 	- `helm install ingress-nginx ingress-nginx/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.extraArgs.default-ssl-certificate=ingress-nginx/susine.dev`

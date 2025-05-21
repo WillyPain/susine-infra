@@ -31,6 +31,7 @@ namespace Identity.Server.OpenIddictServerHandlers
 
             if (context.Request.IsClientCredentialsGrantType())
             {
+                context.Options.Issuer = new UriBuilder(Uri.UriSchemeHttps, "identity.susine.dev").Uri;
                 var application = await appManager.FindByClientIdAsync(context.Request.ClientId);
                 if (application == null)
                 {

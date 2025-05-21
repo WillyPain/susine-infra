@@ -129,7 +129,8 @@ var app = builder.Build();
 // Needed since NGINX handles the TLS termination.
 app.UseForwardedHeaders();
 
-// Hack to allow service mesh traffic 
+// Hack to treat service mesh traffic as secure
+//TODO: test if this works correctly with external connections
 var identityServerIp = Dns.GetHostEntry(Dns.GetHostName()).AddressList[0].ToString();
 app.Use(async (context, next) =>
 {
