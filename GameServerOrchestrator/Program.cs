@@ -74,10 +74,15 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("server", [Authorize] (Kubernetes client) =>
+app.MapGet("server/{matchId}", [Authorize] async (
+    [FromServices] Kubernetes client, 
+    [FromServices] GameServerRegistry registry, 
+    [FromRoute] Guid matchId) =>
 {
     var instanceId = Guid.NewGuid();
     var labels = new Dictionary<string, string> { { "game-server-id", instanceId.ToString() } };
+
+    var gameServer = await registry.Register(matchId, "192.168.1.100");
 
     var pod = new V1Pod
     {
@@ -94,13 +99,20 @@ app.MapGet("server", [Authorize] (Kubernetes client) =>
                 Name = "bright-moon",
                 Image = "willypain/susine-bright-moon-server:latest",
                 Ports = [
-                    new V1ContainerPort { ContainerPort = 4296, Protocol = "TCP" },
-                    new V1ContainerPort { ContainerPort = 4297, Protocol = "UDP" }
+                    new V1ContainerPort { ContainerPort = gameServer.TcpPort, Protocol = "TCP" },
+                    new V1ContainerPort { ContainerPort = gameServer.UdpPort, Protocol = "UDP" }
+                ],
+                Env = [
+                    new V1EnvVar { Name = "port", Value = $"{gameServer.TcpPort}" },
+                    new V1EnvVar { Name = "udpPort", Value = $"{gameServer.UdpPort}" }
                 ],
                 Resources = new () {
                     Requests = new Dictionary<string,ResourceQuantity> {
                         { "cpu", new ResourceQuantity("300m") },
-                    }
+                    },
+                    Limits = new Dictionary<string,ResourceQuantity> {
+                        { "cpu", new ResourceQuantity("300m") },
+                    },
                 }
             }],
             ImagePullSecrets = [
@@ -111,6 +123,8 @@ app.MapGet("server", [Authorize] (Kubernetes client) =>
         }
     };
     var result = client.CreateNamespacedPod(pod, "susine");
+
+    return Results.Json(gameServer);
 });
 
 // Configure the HTTP request pipeline.
