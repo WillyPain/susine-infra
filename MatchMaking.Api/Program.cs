@@ -6,10 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using OpenIddict.Client;
 using OpenIddict.Validation;
 using OpenIddict.Validation.AspNetCore;
-using System.Net.Http.Headers;
 using static OpenIddict.Validation.OpenIddictValidationEvents;
 using static OpenIddict.Client.OpenIddictClientHandlers.Introspection;
 using static OpenIddict.Abstractions.OpenIddictConstants;
+using StackExchange.Redis;
+using MatchMaking.Api.Data.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,6 +78,15 @@ builder.Services.AddOpenIddict()
         options.UseAspNetCore();
     });
 
+//TODO: gotta make this env var
+var connection = ConnectionMultiplexer.Connect("redis-leader:6379");
+builder.Services.AddSingleton(connection);
+builder.Services.AddScoped(s =>
+{
+    var connection = s.GetService<ConnectionMultiplexer>();
+    return connection!.GetDatabase();
+});
+
 builder.Services.AddSignalR();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -85,6 +95,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddAuthentication(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
 builder.Services.AddAuthorization();
 
+builder.Services.AddScoped<MatchMakingQueue>();
 builder.Services.AddScoped<MatchMakingService>();
 
 var app = builder.Build();
