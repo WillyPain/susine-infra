@@ -34,8 +34,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", 
 		identity.local.k8s.deployment.yaml = identity.local.k8s.deployment.yaml
 		matchmaking.local.k8s.deployment.yaml = matchmaking.local.k8s.deployment.yaml
 		namespaces.local.k8s.yaml = namespaces.local.k8s.yaml
-		secrets.local.k8s.yaml = secrets.local.k8s.yaml
 		rbac.local.k8s.roles.yaml = rbac.local.k8s.roles.yaml
+		redis-commander.local.k8s.yaml = redis-commander.local.k8s.yaml
+		redis.local.k8s.yaml = redis.local.k8s.yaml
+		secrets.local.k8s.yaml = secrets.local.k8s.yaml
 		skaffold.yaml = skaffold.yaml
 	EndProjectSection
 EndProject

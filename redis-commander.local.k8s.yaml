@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-redis-commander
+  namespace: susine-infra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: redis-commander
+  template:
+    metadata:
+      labels:
+        service: redis-commander
+    spec:
+      containers:
+        - name: redis-commander
+          image: rediscommander/redis-commander:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: REDIS_HOST
+              value: redis-leader  # Or your redis service name
+            - name: REDIS_PORT
+              value: "6379"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-redis-commander
+  namespace: susine-infra
+  labels:
+    service: redis-commander
+spec:
+  ports:
+    - protocol: TCP
+      port: 8081
+  selector:
+    service: redis-commander
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-redis-commander
+  namespace: susine-infra
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+spec:
+  rules:
+    - host: redis.susine.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service-redis-commander
+                port:
+                  number: 8081
+  ingressClassName: nginx
