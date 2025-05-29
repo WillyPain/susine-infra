@@ -14,7 +14,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.3" />
-    <PackageReference Include="OpenIddict.Client.SystemNetHttp" Version="6.2.0" />
+    <PackageReference Include="NRedisStack" Version="1.0.0" />
+    <PackageReference Include="OpenIddict.Client.SystemNetHttp" Version="6.3.0" />
     <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="6.2.0" />
     <PackageReference Include="OpenIddict.Validation.SystemNetHttp" Version="6.2.0" />
   </ItemGroup>
