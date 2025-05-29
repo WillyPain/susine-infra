@@ -1,8 +1,10 @@
-﻿using k8s;
+﻿using GameServerOrchestrator.Data;
+using k8s;
 using k8s.Models;
 using Microsoft.AspNetCore.Authorization;
 using OpenIddict.Validation;
 using OpenIddict.Validation.AspNetCore;
+using StackExchange.Redis;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using static OpenIddict.Client.OpenIddictClientHandlers.Device;
 using static OpenIddict.Validation.OpenIddictValidationEvents;
@@ -53,10 +55,19 @@ builder.Services.AddScoped(_ =>
     return new Kubernetes(config);
 });
 
-//builder.Services.
+builder.Services.AddScoped<GameServerRegistry>();
 
 builder.Services.AddAuthentication(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
 builder.Services.AddAuthorization();
+
+//TODO: gotta make this env var
+var connection = ConnectionMultiplexer.Connect("redis-leader:6379");
+builder.Services.AddSingleton(connection);
+builder.Services.AddScoped(s =>
+{
+    var connection = s.GetService<ConnectionMultiplexer>();
+    return connection!.GetDatabase();
+});
 
 var app = builder.Build();
 

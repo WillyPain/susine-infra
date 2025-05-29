@@ -10,9 +10,14 @@
   <ItemGroup>
     <PackageReference Include="KubernetesClient" Version="16.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.3" />
+    <PackageReference Include="NRedisStack" Version="1.0.0" />
     <PackageReference Include="OpenIddict.Client.SystemNetHttp" Version="6.2.0" />
     <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="6.2.0" />
     <PackageReference Include="OpenIddict.Validation.SystemNetHttp" Version="6.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GameServer.Orchestrator.Contract\GameServerOrchestrator.Contract.csproj" />
   </ItemGroup>
 
 </Project>
