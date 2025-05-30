@@ -11,6 +11,7 @@ using static OpenIddict.Client.OpenIddictClientHandlers.Introspection;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 using StackExchange.Redis;
 using MatchMaking.Api.Data.Redis;
+using GameServerOrchestrator.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,6 +99,14 @@ builder.Services.AddAuthorization();
 builder.Services.AddScoped<MatchMakingQueue>();
 builder.Services.AddScoped<MatchMakingService>();
 
+// TODO: bit of an issue here (Susine.Clients need this memory cache to store access tokens)
+// will need to find a way to bring this back into the Susine.Client infrastructure
+builder.Services.AddMemoryCache();
+builder.Services.AddGsoClient(options =>
+{
+    options.BaseUrl = "http://service-gso:8080";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -121,40 +130,4 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate(); // Applies any pending migrations
 }
 
-#region TEST
-
-using (var scope = app.Services.CreateScope())
-{
-    await Task.Delay(1000);
-    var token = await GetTokenAsync(scope.ServiceProvider);
-    Console.WriteLine("Access token: {0}", token);
-    Console.WriteLine();
-
-    var resource = await GetResourceAsync(scope.ServiceProvider, token);
-    Console.WriteLine("API response: {0}", resource);
-}
-static async Task<string> GetTokenAsync(IServiceProvider provider)
-{
-    var service = provider.GetRequiredService<OpenIddictClientService>();
-    // GetById not working idk
-    var client = (await service.GetClientRegistrationsAsync()).Where(c => c.ClientId == clientId).First();
-    var result = await service.AuthenticateWithClientCredentialsAsync(new()
-    {
-        Scopes = [.. client.Scopes],
-    });
-    return result.AccessToken;
-}
-
-static async Task<string> GetResourceAsync(IServiceProvider provider, string token)
-{
-    using var client = provider.GetRequiredService<HttpClient>();
-    using var request = new HttpRequestMessage(HttpMethod.Get, "http://service-gso:8080/server");
-    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-    using var response = await client.SendAsync(request);
-
-    return await response.Content.ReadAsStringAsync();
-}
-
-#endregion
 app.Run();

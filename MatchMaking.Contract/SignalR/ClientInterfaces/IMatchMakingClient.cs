@@ -3,6 +3,6 @@
     public interface IMatchMakingClient
     {
         Task JoinedQueue();
-        Task MatchFound(Guid matchId);
+        Task MatchFound(Guid matchId, string ipAddress, int tcpPort, int udpPort);
     }
 }

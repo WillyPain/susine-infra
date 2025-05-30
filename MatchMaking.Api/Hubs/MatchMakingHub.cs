@@ -10,7 +10,7 @@ namespace MatchMaking.Server.Hubs
     {
         public async override Task OnConnectedAsync()
         {
-            //todo fix fix ifx
+            //todo fix fix fix
             if (Context.UserIdentifier == null)
             {
                 throw new Exception();
@@ -25,7 +25,7 @@ namespace MatchMaking.Server.Hubs
 
         public async override Task OnDisconnectedAsync(Exception? exception)
         {
-            await _matchMakingService.Dequeue(Guid.Parse(Context!.UserIdentifier!));
+            await _matchMakingService.Dequeue(Guid.Parse(Context!.UserIdentifier!), Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
     }

@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GameServerOrchestrator.Client\GameServerOrchestrator.Client.csproj" />
     <ProjectReference Include="..\MatchMaking.Contract\MatchMaking.Contract.csproj" />
   </ItemGroup>
 

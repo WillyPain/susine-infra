@@ -1,16 +1,16 @@
-﻿using Duende.IdentityModel.OidcClient;
-using MatchMaking.Contract;
+﻿using MatchMaking.Contract;
 using MatchMaking.Contract.SignalR.ClientInterfaces;
 using Microsoft.AspNetCore.SignalR.Client;
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 namespace MatchMaking.Client.HubConnections
 {
-    public class MatchMakingHubConnection(IHubConnectionBuilder builder, OidcClient oidcClient) : IAsyncDisposable, IMatchMakingClient
+    public class MatchMakingHubConnection : IAsyncDisposable, IMatchMakingClient
     {
         private HubConnection? _hubConnection;
 
-        public event Action OnQueueJoined;
-        public event Action OnMatchJoined;
+        public event Action? OnQueueJoined;
+        public event Action<Guid, string, int, int>? OnMatchJoined;
 
         private static string? AccessToken => LoginPage.CurrentAccessToken;
 
@@ -25,7 +25,7 @@ namespace MatchMaking.Client.HubConnections
             .Build();
 
             _hubConnection.On(nameof(JoinedQueue), JoinedQueue);
-            _hubConnection.On<Guid>(nameof(MatchFound), MatchFound);
+            _hubConnection.On<Guid, string, int, int>(nameof(MatchFound), MatchFound);
             await _hubConnection.StartAsync();
         }
 
@@ -40,13 +40,14 @@ namespace MatchMaking.Client.HubConnections
 
         public async Task JoinedQueue()
         {
-            OnQueueJoined();
+            OnQueueJoined?.Invoke();
         }
 
-        public async Task MatchFound(Guid matchId)
+        public async Task MatchFound(Guid matchId, string ipAddress, int tcpPort, int udpPort)
         {
-            OnMatchJoined();
+            OnMatchJoined?.DynamicInvoke(matchId, ipAddress, tcpPort, udpPort);
             await DisposeAsync();
         }
     }
 }
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously

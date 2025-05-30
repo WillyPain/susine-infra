@@ -2,6 +2,7 @@
 using k8s;
 using k8s.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Validation;
 using OpenIddict.Validation.AspNetCore;
 using StackExchange.Redis;
