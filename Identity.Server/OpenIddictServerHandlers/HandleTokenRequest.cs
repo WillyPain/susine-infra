@@ -24,7 +24,7 @@ namespace Identity.Server.OpenIddictServerHandlers
 
         public async ValueTask HandleAsync(OpenIddictServerEvents.HandleTokenRequestContext context)
         {
-            if (context is null)
+            if (context?.Request.ClientId is null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
@@ -47,7 +47,6 @@ namespace Identity.Server.OpenIddictServerHandlers
                 // Add the claims that will be persisted in the tokens (use the client_id as the subject identifier).
                 identity.SetClaim(Claims.Subject, await appManager.GetClientIdAsync(application));
                 identity.SetClaim(Claims.Name, await appManager.GetDisplayNameAsync(application));
-                //identity.SetClaim(Claims.Scope, "gsr");
 
                 // Note: In the original OAuth 2.0 specification, the client credentials grant
                 // doesn't return an identity token, which is an OpenID Connect concept.
