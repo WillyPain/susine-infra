@@ -43,7 +43,7 @@ Date: 25/04/2025
 
 
 ## k3s server stuff
-- Little guide for setting up a baremetal k3s cluster on a linex server
+- Little guide for setting up a bare metal k3s cluster on a linex server
 - TODO: may as well make this a script at some point (ill wait to iron out the kinks first)
 
 #### Installing k3s cluster
@@ -52,6 +52,7 @@ Date: 25/04/2025
 #### Kube'n from home
 - Yoink the cluster config from k3s server `sudo cat /etc/rancher/k3s/k3s.yaml`
 - Copy it to on dev machine `~\.kube\k3s.yaml`
+- Change the server url from 127.0.0.1 to whatever the remote machine ip is
 - Add new config file to env variable (dev machine) `KUBECONFIG = ~\.kube\config;~\.kube\k3s.yaml`
 
 #### Setup local dev image registry 
@@ -65,3 +66,13 @@ Date: 25/04/2025
 	- `docker run -d -p 5000:5000 --restart=always --name registry registry:2`
 	- The registry url would be "<local ip addres>:5000"
 	- Then push your images to the registry
+
+
+#### Registry Credentials for DockerHub
+- 
+kubectl create secret docker-registry regcred \
+  --docker-server=docker.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-password> \
+  --docker-email=<you@example.com> \
+  -n susine

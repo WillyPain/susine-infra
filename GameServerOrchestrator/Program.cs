@@ -80,8 +80,7 @@ app.MapGet("server/{matchId}", [Authorize] async (
     [FromServices] GameServerRegistry registry, 
     [FromRoute] Guid matchId) =>
 {
-    var instanceId = Guid.NewGuid();
-    var labels = new Dictionary<string, string> { { "game-server-id", instanceId.ToString() } };
+    var labels = new Dictionary<string, string> { { "game-server-id", matchId.ToString() } };
 
     var gameServer = await registry.Register(matchId, "192.168.1.100");
 
@@ -96,9 +95,25 @@ app.MapGet("server/{matchId}", [Authorize] async (
         {
             HostNetwork = true,
             RestartPolicy = "Never",
+            Volumes = [
+                new () {
+                    Name = "plugins",
+                    EmptyDir = new ()
+                }
+            ],
+            InitContainers = [ new () {
+                Name = "bright-moon-plugin",
+                Image = "willypain/susine-brightmoon-plugin:latest",
+                Command = ["/bin/sh", "-c"],
+                Args = ["cp -r /app/* /shared/"],
+                VolumeMounts = [ new () {
+                    Name = "plugins",
+                    MountPath = "/shared"
+                }]
+            }],
             Containers = [ new() {
                 Name = "bright-moon",
-                Image = "willypain/susine-bright-moon-server:latest",
+                Image = "willypain/susine-darkrift-server:latest",
                 Ports = [
                     new V1ContainerPort { ContainerPort = gameServer.TcpPort, Protocol = "TCP" },
                     new V1ContainerPort { ContainerPort = gameServer.UdpPort, Protocol = "UDP" }
@@ -114,7 +129,13 @@ app.MapGet("server/{matchId}", [Authorize] async (
                     Limits = new Dictionary<string,ResourceQuantity> {
                         { "cpu", new ResourceQuantity("300m") },
                     },
-                }
+                },
+                VolumeMounts = [
+                    new () {
+                        Name = "plugins",
+                        MountPath = "/app/Plugins"
+                    }
+                ]
             }],
             ImagePullSecrets = [
                 new () {

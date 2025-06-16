@@ -34,6 +34,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kubernetes", "Kubernetes", 
 		identity.local.k8s.deployment.yaml = identity.local.k8s.deployment.yaml
 		matchmaking.local.k8s.deployment.yaml = matchmaking.local.k8s.deployment.yaml
 		namespaces.local.k8s.yaml = namespaces.local.k8s.yaml
+		plugins-volume.local.k8s.volumes.yaml = plugins-volume.local.k8s.volumes.yaml
 		rbac.local.k8s.roles.yaml = rbac.local.k8s.roles.yaml
 		redis-commander.local.k8s.yaml = redis-commander.local.k8s.yaml
 		redis.local.k8s.yaml = redis.local.k8s.yaml
@@ -45,7 +46,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerOrchestrator.Cont
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GSO", "GSO", "{4CE2FEBE-9E76-4DC1-AE69-A5B8BD34464E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerOrchestrator.Client", "GameServerOrchestrator.Client\GameServerOrchestrator.Client.csproj", "{43317A03-D086-4368-AE05-523DABC0BB57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServerOrchestrator.Http.Client", "GameServerOrchestrator.Client\GameServerOrchestrator.Http.Client.csproj", "{43317A03-D086-4368-AE05-523DABC0BB57}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{D027369D-E017-47F7-907C-1877BEE5C8F9}"
 EndProject
